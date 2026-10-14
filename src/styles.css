@@ -1,0 +1,419 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--app-font);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-note-default: var(--note-default);
+  --color-note-red: var(--note-red);
+  --color-note-orange: var(--note-orange);
+  --color-note-yellow: var(--note-yellow);
+  --color-note-green: var(--note-green);
+  --color-note-teal: var(--note-teal);
+  --color-note-blue: var(--note-blue);
+  --color-note-pink: var(--note-pink);
+  --color-note-gray: var(--note-gray);
+  --color-ink-red: var(--ink-red);
+  --color-ink-blue: var(--ink-blue);
+  --color-ink-green: var(--ink-green);
+  --color-ink-purple: var(--ink-purple);
+}
+
+:root {
+  --app-font: "Manrope", system-ui, sans-serif;
+  --radius: 0.875rem;
+  --background: oklch(0.985 0.004 90);
+  --foreground: oklch(0.24 0.01 80);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.01 80);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.01 80);
+  --primary: oklch(0.82 0.16 85);
+  --primary-foreground: oklch(0.25 0.03 80);
+  --secondary: oklch(0.95 0.03 90);
+  --secondary-foreground: oklch(0.3 0.03 80);
+  --muted: oklch(0.95 0.005 90);
+  --muted-foreground: oklch(0.52 0.01 80);
+  --accent: oklch(0.94 0.06 90);
+  --accent-foreground: oklch(0.3 0.04 80);
+  --destructive: oklch(0.58 0.22 27);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.9 0.006 90);
+  --input: oklch(0.9 0.006 90);
+  --ring: oklch(0.82 0.16 85);
+  --note-default: oklch(1 0 0);
+  --note-red: oklch(0.88 0.07 25);
+  --note-orange: oklch(0.9 0.08 60);
+  --note-yellow: oklch(0.95 0.1 98);
+  --note-green: oklch(0.92 0.08 140);
+  --note-teal: oklch(0.92 0.05 185);
+  --note-blue: oklch(0.9 0.05 240);
+  --note-pink: oklch(0.91 0.06 340);
+  --note-gray: oklch(0.92 0.01 80);
+  --ink-red: oklch(0.52 0.2 28);
+  --ink-blue: oklch(0.5 0.18 255);
+  --ink-green: oklch(0.48 0.15 145);
+  --ink-purple: oklch(0.5 0.18 315);
+}
+
+.dark {
+  --background: oklch(0.17 0.008 80);
+  --foreground: oklch(0.94 0.006 90);
+  --card: oklch(0.21 0.008 80);
+  --card-foreground: oklch(0.94 0.006 90);
+  --popover: oklch(0.21 0.008 80);
+  --popover-foreground: oklch(0.94 0.006 90);
+  --primary: oklch(0.8 0.15 85);
+  --primary-foreground: oklch(0.2 0.02 80);
+  --secondary: oklch(0.27 0.01 80);
+  --secondary-foreground: oklch(0.92 0.006 90);
+  --muted: oklch(0.25 0.008 80);
+  --muted-foreground: oklch(0.69 0.01 80);
+  --accent: oklch(0.32 0.04 85);
+  --accent-foreground: oklch(0.94 0.01 90);
+  --border: oklch(0.32 0.008 80);
+  --input: oklch(0.32 0.008 80);
+  --ring: oklch(0.78 0.14 85);
+  --note-default: oklch(0.23 0.008 80);
+  --note-red: oklch(0.32 0.08 25);
+  --note-orange: oklch(0.34 0.08 60);
+  --note-yellow: oklch(0.38 0.08 95);
+  --note-green: oklch(0.32 0.07 140);
+  --note-teal: oklch(0.31 0.06 185);
+  --note-blue: oklch(0.31 0.06 240);
+  --note-pink: oklch(0.32 0.07 340);
+  --note-gray: oklch(0.3 0.01 80);
+  --ink-red: oklch(0.78 0.14 28);
+  --ink-blue: oklch(0.76 0.13 250);
+  --ink-green: oklch(0.76 0.13 145);
+  --ink-purple: oklch(0.78 0.13 315);
+}
+
+html[data-font="serif"] { --app-font: "Lora", Georgia, serif; }
+html[data-font="mono"] { --app-font: "Space Mono", monospace; }
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html, body { font-family: var(--app-font); }
+  body { background-color: var(--color-background); color: var(--color-foreground); -webkit-tap-highlight-color: transparent; }
+}
+
+@utility masonry { column-count: 2; column-gap: 0.5rem; }
+
+.note-card { animation: note-spring-in 520ms cubic-bezier(0.16, 1, 0.3, 1) forwards; transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important; will-change: transform, box-shadow; }
+.note-card:hover { transform: translateY(-5px) scale(1.012) !important; box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.16), 0 0 0 1.5px color-mix(in oklab, var(--primary) 40%, transparent) !important; }
+.note-card:active { transform: scale(0.96) !important; transition-duration: 0.1s !important; }
+.note-card:nth-child(1) { animation-delay: 20ms; }
+.note-card:nth-child(2) { animation-delay: 60ms; }
+.note-card:nth-child(3) { animation-delay: 100ms; }
+.note-card:nth-child(4) { animation-delay: 140ms; }
+.note-card:nth-child(5) { animation-delay: 180ms; }
+.note-card:nth-child(6) { animation-delay: 220ms; }
+
+.empty-icon { animation: gentle-bob 3.5s ease-in-out infinite !important; filter: drop-shadow(0 10px 14px color-mix(in oklab, var(--primary) 30%, transparent)); }
+.font-preview-manrope { font-family: "Manrope", sans-serif; }
+.font-preview-serif { font-family: "Lora", serif; }
+.font-preview-mono { font-family: "Space Mono", monospace; }
+
+/* Floating Action Button & Icons */
+button.fixed.bottom-6.right-6 { animation: fab-float 4s ease-in-out infinite, fab-arrive 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; box-shadow: 0 10px 25px -4px color-mix(in oklab, var(--primary) 50%, transparent) !important; transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease !important; }
+button.fixed.bottom-6.right-6:hover { transform: translateY(-6px) scale(1.08) rotate(6deg) !important; box-shadow: 0 18px 36px -6px color-mix(in oklab, var(--primary) 65%, transparent) !important; }
+button.fixed.bottom-6.right-6:active { transform: scale(0.9) rotate(-3deg) !important; }
+
+button[aria-label], button.icon-btn, .grid.size-10 { transition: transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease, color 0.2s ease !important; }
+button[aria-label]:hover, button.icon-btn:hover, .grid.size-10:hover { transform: scale(1.12) !important; }
+button[aria-label]:active, button.icon-btn:active, .grid.size-10:active { transform: scale(0.88) !important; }
+
+[aria-label*="Theme"] svg { animation: theme-spin 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) !important; }
+
+header.sticky > div { transition: box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease !important; }
+header.sticky > div:hover { box-shadow: 0 6px 20px -3px rgba(0, 0, 0, 0.08) !important; }
+
+aside { animation: drawer-bounce 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important; }
+aside button { transition: transform 0.22s ease, background-color 0.2s ease !important; }
+aside button:hover { transform: translateX(6px) !important; }
+
+.fixed.inset-0.z-50 section { animation: modal-spring-up 0.42s cubic-bezier(0.16, 1, 0.3, 1) !important; }
+
+button:has(.size-5) { transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important; }
+button:has(.size-5):hover { transform: translateY(-3px) scale(1.02) !important; box-shadow: 0 8px 18px -4px rgba(0, 0, 0, 0.09) !important; }
+
+li input[type="checkbox"], li button { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important; }
+li:hover { transform: translateX(3px) !important; transition: transform 0.18s ease !important; }
+
+@keyframes note-spring-in { 0% { opacity: 0; transform: translateY(22px) scale(0.94); } 60% { opacity: 0.95; transform: translateY(-3px) scale(1.01); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes theme-spin { 0% { transform: rotate(-90deg) scale(0.5); opacity: 0; } 70% { transform: rotate(20deg) scale(1.15); } 100% { transform: rotate(0deg) scale(1); opacity: 1; } }
+@keyframes fab-arrive { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 70% { transform: scale(1.18) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+@keyframes fab-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes drawer-bounce { 0% { transform: translateX(-100%); } 75% { transform: translateX(4px); } 100% { transform: translateX(0); } }
+@keyframes modal-spring-up { 0% { opacity: 0; transform: translateY(60px) scale(0.97); } 70% { transform: translateY(-4px) scale(1.005); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes gentle-bob { 0%, 100% { transform: translateY(0) rotate(0deg) scale(1); } 33% { transform: translateY(-10px) rotate(-3deg) scale(1.04); } 66% { transform: translateY(-4px) rotate(3deg) scale(0.98); } }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
+
+
+/* ========================================================
+   THEME COLOR SCHEMES
+   ======================================================== */
+:root[data-theme-color="amber"], html[data-theme-color="amber"] {
+  --primary: oklch(0.82 0.16 85);
+  --primary-foreground: oklch(0.22 0.03 80);
+  --ring: oklch(0.82 0.16 85);
+}
+.dark[data-theme-color="amber"], .dark [data-theme-color="amber"], html.dark[data-theme-color="amber"] {
+  --primary: oklch(0.82 0.16 85);
+  --primary-foreground: oklch(0.2 0.02 80);
+  --ring: oklch(0.8 0.15 85);
+}
+
+:root[data-theme-color="emerald"], html[data-theme-color="emerald"] {
+  --primary: oklch(0.68 0.18 155);
+  --primary-foreground: oklch(0.99 0 0);
+  --ring: oklch(0.68 0.18 155);
+}
+.dark[data-theme-color="emerald"], .dark [data-theme-color="emerald"], html.dark[data-theme-color="emerald"] {
+  --primary: oklch(0.74 0.17 155);
+  --primary-foreground: oklch(0.18 0.03 155);
+  --ring: oklch(0.74 0.17 155);
+}
+
+:root[data-theme-color="blue"], html[data-theme-color="blue"] {
+  --primary: oklch(0.62 0.2 245);
+  --primary-foreground: oklch(0.99 0 0);
+  --ring: oklch(0.62 0.2 245);
+}
+.dark[data-theme-color="blue"], .dark [data-theme-color="blue"], html.dark[data-theme-color="blue"] {
+  --primary: oklch(0.72 0.18 245);
+  --primary-foreground: oklch(0.18 0.03 245);
+  --ring: oklch(0.72 0.18 245);
+}
+
+:root[data-theme-color="purple"], html[data-theme-color="purple"] {
+  --primary: oklch(0.63 0.22 305);
+  --primary-foreground: oklch(0.99 0 0);
+  --ring: oklch(0.63 0.22 305);
+}
+.dark[data-theme-color="purple"], .dark [data-theme-color="purple"], html.dark[data-theme-color="purple"] {
+  --primary: oklch(0.74 0.2 305);
+  --primary-foreground: oklch(0.18 0.03 305);
+  --ring: oklch(0.74 0.2 305);
+}
+
+:root[data-theme-color="rose"], html[data-theme-color="rose"] {
+  --primary: oklch(0.65 0.22 15);
+  --primary-foreground: oklch(0.99 0 0);
+  --ring: oklch(0.65 0.22 15);
+}
+.dark[data-theme-color="rose"], .dark [data-theme-color="rose"], html.dark[data-theme-color="rose"] {
+  --primary: oklch(0.74 0.2 15);
+  --primary-foreground: oklch(0.18 0.03 15);
+  --ring: oklch(0.74 0.2 15);
+}
+
+:root[data-theme-color="orange"], html[data-theme-color="orange"] {
+  --primary: oklch(0.7 0.19 55);
+  --primary-foreground: oklch(0.99 0 0);
+  --ring: oklch(0.7 0.19 55);
+}
+.dark[data-theme-color="orange"], .dark [data-theme-color="orange"], html.dark[data-theme-color="orange"] {
+  --primary: oklch(0.76 0.18 55);
+  --primary-foreground: oklch(0.2 0.03 55);
+  --ring: oklch(0.76 0.18 55);
+}
+
+
+/* ========================================================
+   SEAMLESS TRANSITIONS & PAGE VIEW ANIMATIONS
+   ======================================================== */
+
+.view-transition {
+  animation: view-fade-slide 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes view-fade-slide {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.masonry, .flex.flex-col.gap-2 {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.editor-transition {
+  animation: editor-spring-in 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease !important;
+}
+
+@keyframes editor-spring-in {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.004);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+body, header, aside, main, section, .note-card {
+  transition: background-color 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.25s ease,
+              box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.fixed.inset-0.z-40 > div:first-child {
+  animation: backdrop-blur-fade 0.32s ease-out forwards;
+}
+
+@keyframes backdrop-blur-fade {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(3px); }
+}
+
+.fixed.inset-0.z-50 section {
+  animation: sheet-spring 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes sheet-spring {
+  0% {
+    opacity: 0;
+    transform: translateY(100%) scale(0.96);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.005);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fixed.inset-x-0.bottom-0 {
+  animation: bottom-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes bottom-enter {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+input[placeholder="Search your notes"] {
+  animation: search-expand 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes search-expand {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* FAB speed-dial menu */
+.fab-menu { position: fixed; left: 0; right: 0; bottom: 104px; z-index: 40; margin: 0 auto; max-width: 36rem; padding: 0 1rem; display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+.fab-item { display: flex; align-items: center; gap: 0.5rem; height: 2.25rem; padding: 0 0.875rem 0 0.625rem; border-radius: 9999px; border: 1px solid var(--color-border, rgba(128,128,128,.3)); background: var(--color-card, var(--card)); color: var(--color-foreground, var(--foreground)); font-size: 0.8125rem; font-weight: 600; box-shadow: 0 6px 16px -4px rgba(0,0,0,.25); opacity: 0; animation: fab-rise 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; transition: transform 0.15s ease !important; }
+.fab-item:active { transform: scale(0.94) !important; }
+.fab-item svg { width: 1rem; height: 1rem; }
+@keyframes fab-rise { from { opacity: 0; transform: translateY(28px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* Page transitions: pure fade (no transform, avoids focus-scroll jump) */
+.view-transition { animation: page-fade 0.28s ease-out both !important; }
+.editor-transition { animation: page-fade 0.22s ease-out both !important; overflow: hidden; }
+@keyframes page-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* Lock background scroll while the editor is open */
+html:has(.editor-transition), body:has(.editor-transition) { overflow: hidden !important; overscroll-behavior: none; }
+
+/* Markdown preview */
+.md-view { min-height: 12rem; line-height: 1.6; word-break: break-word; }
+.md-view > * + * { margin-top: 0.6em; }
+.md-view h1 { font-size: 1.6em; font-weight: 800; } .md-view h2 { font-size: 1.35em; font-weight: 800; } .md-view h3 { font-size: 1.15em; font-weight: 700; } .md-view h4, .md-view h5, .md-view h6 { font-weight: 700; }
+.md-view ul { list-style: disc; padding-left: 1.4em; } .md-view ol { list-style: decimal; padding-left: 1.4em; }
+.md-view li input { margin-right: 0.4em; }
+.md-view blockquote { border-left: 3px solid currentColor; opacity: .8; padding-left: .8em; }
+.md-view code { font-family: "Space Mono", monospace; font-size: .9em; background: color-mix(in oklab, currentColor 12%, transparent); padding: .1em .35em; border-radius: .35em; }
+.md-view pre { background: color-mix(in oklab, currentColor 10%, transparent); padding: .75em; border-radius: .6em; overflow-x: auto; } .md-view pre code { background: none; padding: 0; }
+.md-view a { text-decoration: underline; color: var(--primary); }
+.md-view hr { border: 0; border-top: 1px solid color-mix(in oklab, currentColor 25%, transparent); }
+
+/* Drag & drop reordering */
+.note-card { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.note-card.note-dragging {
+  position: fixed !important;
+  z-index: 100 !important;
+  opacity: 0.9 !important;
+  animation: none !important;
+  transition: none !important;
+  box-shadow: 0 20px 45px -8px rgba(0,0,0,.4) !important;
+  cursor: grabbing;
+  pointer-events: none;
+}
+.note-card.note-drop-target { outline: 2px dashed var(--primary); outline-offset: 3px; }
+
+.note-card.note-shift-down {
+  transform: translateY(18px) scale(0.98) !important;
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1) !important;
+}
+.note-card.note-shift-up {
+  transform: translateY(-18px) scale(0.98) !important;
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1) !important;
+}
+
+.note-drag-placeholder {
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.note-card.note-selected {
+  outline: 2.5px solid var(--primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 20%, transparent) !important;
+  transform: none !important;
+}
+.note-card.note-selected:hover {
+  transform: none !important;
+}
+
+.pointer-events-auto { pointer-events: auto !important; }
+.pointer-events-none { pointer-events: none !important; }

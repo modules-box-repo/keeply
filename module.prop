@@ -1,0 +1,10 @@
+id=keeply
+name=Keeply
+icon=icon.jpg
+description=A fast, lightweight, and modern local notes & checklists app. Capture ideas, organize tasks, and keep everything in one place with a smooth experience.
+author=YasserNull
+version=v1.0.0
+versionCode=1
+repository=https://github.com/modules-box-repo/keeply
+install=setup.sh
+permission=default
