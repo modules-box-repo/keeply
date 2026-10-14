@@ -125,16 +125,71 @@ export function KeepApp() {
   const [editing, setEditing] = useState<Note | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [toast, setToast] = useState<string | null>(null);
+  const [serverLoaded, setServerLoaded] = useState(false);
+
+  // Initial sync with backend server (survives any port change or new device)
+  useEffect(() => {
+    fetch("/api/data")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((serverData) => {
+        if (!serverData) {
+          setServerLoaded(true);
+          return;
+        }
+        const serverNotes = Array.isArray(serverData.notes) ? serverData.notes : [];
+        const serverLabels = Array.isArray(serverData.labels) ? serverData.labels : [];
+        const serverSettings = serverData.settings && typeof serverData.settings === "object" ? serverData.settings : {};
+
+        if (serverNotes.length > 0 || serverLabels.length > 0 || Object.keys(serverSettings).length > 0) {
+          setNotes(serverNotes);
+          safeSaveNotes(serverNotes);
+          if (serverLabels.length > 0) {
+            setLabels(serverLabels);
+            try { localStorage.setItem(LKEY, JSON.stringify(serverLabels)); } catch {}
+          }
+          if (["light", "dark"].includes(serverSettings.theme)) setTheme(serverSettings.theme);
+          if (["amber", "emerald", "blue", "purple", "rose", "orange"].includes(serverSettings.themeColor)) setThemeColor(serverSettings.themeColor);
+          if (["manrope", "serif", "mono"].includes(serverSettings.font)) setFont(serverSettings.font);
+        } else {
+          // If server data.json is genuinely empty, migrate current browser notes/settings to server
+          const localRaw = localStorage.getItem(KEY);
+          if (localRaw) {
+            try {
+              const localNotes = JSON.parse(localRaw);
+              if (Array.isArray(localNotes) && localNotes.length > 0) {
+                setNotes(localNotes);
+                fetch("/api/data", {
+                  method: "POST",
+                  headers: { "content-type": "application/json" },
+                  body: JSON.stringify({ notes: localNotes, labels, settings: { theme, font, themeColor } }),
+                }).catch(() => {});
+              }
+            } catch {}
+          }
+        }
+        setServerLoaded(true);
+      })
+      .catch(() => {
+        setServerLoaded(true);
+      });
+  }, []);
 
   useEffect(() => {
+    if (!serverLoaded) return; // Prevent overwriting data.json with empty state before initial fetch!
+
     safeSaveNotes(notes);
-  }, [notes]);
-
-  useEffect(() => {
     try {
       localStorage.setItem(LKEY, JSON.stringify(labels));
     } catch {}
-  }, [labels]);
+    const timer = setTimeout(() => {
+      fetch("/api/data", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ notes, labels, settings: { theme, font, themeColor } }),
+      }).catch(() => {});
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [notes, labels, theme, font, themeColor, serverLoaded]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");

@@ -60,6 +60,19 @@ export async function processFileAttachment(file: File): Promise<Attachment> {
   const fileId = "att_" + Math.random().toString(36).slice(2, 11) + "_" + Date.now();
   await saveMediaBlob(fileId, file);
 
+  // Upload to server so attachment is accessible across all ports/hosts
+  try {
+    fetch("/api/upload", {
+      method: "POST",
+      headers: {
+        "x-file-id": fileId,
+        "x-filename": encodeURIComponent(file.name),
+        "content-type": file.type || "application/octet-stream",
+      },
+      body: file,
+    }).catch(() => {});
+  } catch {}
+
   const isImage = file.type.startsWith("image/");
   const isVideo = file.type.startsWith("video/");
 
