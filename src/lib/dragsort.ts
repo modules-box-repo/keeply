@@ -98,21 +98,26 @@ export function startNoteDrag(
     el.style.margin = "0";
     el.classList.add("note-dragging");
 
+    el.style.touchAction = "none";
     navigator.vibrate?.(15);
     tick();
   };
 
   // Timer:
-  // If selection is NOT active: long press initiates selection!
-  // If selection IS active: drag can start either on movement or on press!
+  // If selection is NOT active: long press initiates selection ONLY (no drag)!
+  // If selection IS active: long press initiates drag & drop!
   const timer = window.setTimeout(() => {
-    if (!isSelectionActive && onLongPressSelect && !hasMoved) {
-      navigator.vibrate?.(25);
-      onLongPressSelect(id);
-      dragState.block = true;
-      window.setTimeout(() => {
-        dragState.block = false;
-      }, 120);
+    if (hasMoved) return;
+
+    if (!isSelectionActive) {
+      if (onLongPressSelect) {
+        navigator.vibrate?.(25);
+        onLongPressSelect(id);
+        dragState.block = true;
+        window.setTimeout(() => {
+          dragState.block = false;
+        }, 140);
+      }
       cleanListeners();
       return;
     }
@@ -127,13 +132,9 @@ export function startNoteDrag(
     y = m.clientY;
     if (Math.hypot(x - sx, y - sy) > 8) {
       hasMoved = true;
-      // If we move during selection mode, begin dragging right away!
-      if (isSelectionActive && !active) {
+      // Moving before long-press timer fired means scrolling, so cancel drag/select
+      if (!active) {
         window.clearTimeout(timer);
-        startDraggingVisuals();
-      } else if (!isSelectionActive && !active) {
-        window.clearTimeout(timer);
-        startDraggingVisuals();
       }
     }
   };
@@ -165,6 +166,7 @@ export function startNoteDrag(
     el.style.removeProperty("left");
     el.style.removeProperty("top");
     el.style.removeProperty("margin");
+    el.style.removeProperty("touch-action");
 
     let targetId: string | undefined = undefined;
     let insertAfter = false;
