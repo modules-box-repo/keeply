@@ -65,8 +65,8 @@ export async function processFileAttachment(file: File): Promise<Attachment> {
 
   if (isImage) {
     try {
-      // 1280px high-definition crisp preview
-      const thumb = await resizeImage(file, 1280);
+      // 540px crisp 3x-retina mobile thumbnail that fits safely in storage
+      const thumb = await resizeImage(file, 540);
       return { id: fileId, name: file.name, type: file.type, size: file.size, thumb };
     } catch {
       return { id: fileId, name: file.name, type: file.type, size: file.size };
@@ -75,8 +75,8 @@ export async function processFileAttachment(file: File): Promise<Attachment> {
 
   if (isVideo) {
     try {
-      // 1280px high-definition crisp video poster frame
-      const thumb = await captureVideoFrame(file, 1280);
+      // 540px crisp video poster frame
+      const thumb = await captureVideoFrame(file, 540);
       return { id: fileId, name: file.name, type: file.type, size: file.size, thumb };
     } catch {
       return { id: fileId, name: file.name, type: file.type, size: file.size };
@@ -115,8 +115,7 @@ function resizeImage(file: File, maxDim: number): Promise<string> {
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
         ctx.drawImage(img, 0, 0, w, h);
-        // High quality 0.92
-        resolve(canvas.toDataURL("image/jpeg", 0.92));
+        resolve(canvas.toDataURL("image/jpeg", 0.78));
       };
       img.onerror = reject;
       img.src = e.target?.result as string;
@@ -158,7 +157,7 @@ function captureVideoFrame(file: File, maxDim: number): Promise<string> {
         ctx.imageSmoothingQuality = "high";
         ctx.drawImage(video, 0, 0, w, h);
         URL.revokeObjectURL(url);
-        resolve(canvas.toDataURL("image/jpeg", 0.92));
+        resolve(canvas.toDataURL("image/jpeg", 0.78));
       } else {
         URL.revokeObjectURL(url);
         resolve("");

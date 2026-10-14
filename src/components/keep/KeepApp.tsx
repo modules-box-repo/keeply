@@ -54,10 +54,67 @@ function noteTextClass(note: Note) {
   return [TEXT_SIZES[note.textSize ?? "medium"], TEXT_COLORS[note.textColor ?? "default"], note.bold && "font-bold", note.italic && "italic", note.underline && "underline", note.strike && "line-through"].filter(Boolean).join(" ");
 }
 
+function safeSaveNotes(ns: Note[]) {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(ns));
+  } catch (err) {
+    console.warn("Storage quota exceeded, stripping large base64 thumbnails:", err);
+    try {
+      const lightweight = ns.map((n) => {
+        if (n.attachment?.thumb?.startsWith("data:")) {
+          const { thumb, ...rest } = n.attachment;
+          return { ...n, attachment: rest };
+        }
+        return n;
+      });
+      localStorage.setItem(KEY, JSON.stringify(lightweight));
+    } catch (e2) {
+      console.error("Failed to save notes:", e2);
+    }
+  }
+}
+
 export function KeepApp() {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [labels, setLabels] = useState<string[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [notes, setNotes] = useState<Note[]>(() => {
+    try {
+      const raw = localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [labels, setLabels] = useState<string[]>(() => {
+    try {
+      const raw = localStorage.getItem(LKEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [theme, setTheme] = useState<Theme>(() => {
+    try {
+      const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+      return ["light", "dark"].includes(s.theme) ? s.theme : "light";
+    } catch {
+      return "light";
+    }
+  });
+  const [themeColor, setThemeColor] = useState<ThemeColor>(() => {
+    try {
+      const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+      return ["amber", "emerald", "blue", "purple", "rose", "orange"].includes(s.themeColor) ? s.themeColor : "amber";
+    } catch {
+      return "amber";
+    }
+  });
+  const [font, setFont] = useState<Font>(() => {
+    try {
+      const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+      return ["manrope", "serif", "mono"].includes(s.font) ? s.font : "manrope";
+    } catch {
+      return "manrope";
+    }
+  });
   const [view, setView] = useState<View>({ kind: "notes" });
   const [drawer, setDrawer] = useState(false);
   const [settings, setSettings] = useState(false);
@@ -68,38 +125,61 @@ export function KeepApp() {
   const [editing, setEditing] = useState<Note | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [toast, setToast] = useState<string | null>(null);
-  const [theme, setTheme] = useState<Theme>("light");
-  const [themeColor, setThemeColor] = useState<ThemeColor>("amber");
-  const [font, setFont] = useState<Font>("manrope");
+
+  useEffect(() => {
+    safeSaveNotes(notes);
+  }, [notes]);
 
   useEffect(() => {
     try {
-      setNotes(JSON.parse(localStorage.getItem(KEY) || "[]"));
-      setLabels(JSON.parse(localStorage.getItem(LKEY) || "[]"));
-      const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
-      if (["light", "dark"].includes(saved.theme)) setTheme(saved.theme);
-      if (["manrope", "serif", "mono"].includes(saved.font)) setFont(saved.font);
-      if (["amber", "emerald", "blue", "purple", "rose", "orange"].includes(saved.themeColor)) setThemeColor(saved.themeColor);
+      localStorage.setItem(LKEY, JSON.stringify(labels));
     } catch {}
-    setLoaded(true);
-  }, []);
-  useEffect(() => { if (loaded) localStorage.setItem(KEY, JSON.stringify(notes)); }, [notes, loaded]);
-  useEffect(() => { if (loaded) localStorage.setItem(LKEY, JSON.stringify(labels)); }, [labels, loaded]);
+  }, [labels]);
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
     document.documentElement.dataset["font"] = font;
     document.documentElement.dataset["themeColor"] = themeColor;
-    if (loaded) localStorage.setItem(SETTINGS_KEY, JSON.stringify({ theme, font, themeColor }));
-  }, [theme, font, themeColor, loaded]);
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ theme, font, themeColor }));
+    } catch {}
+  }, [theme, font, themeColor]);
+
+  // Handle hardware / gesture back button
+  useEffect(() => {
+    if (!editing && !settings && !drawer) return;
+    const onPopState = () => {
+      if (editing) setEditing(null);
+      else if (settings) setSettings(false);
+      else if (drawer) setDrawer(false);
+    };
+    window.history.pushState({ modal: true }, "");
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [Boolean(editing), settings, drawer]);
+
+  const isNoteEmpty = (n: Note) =>
+    !n.attachment && !n.title.trim() && !n.body.trim() && !n.items.some((i) => i.text.trim());
 
   const saveEditing = (n: Note) => {
-    const empty = !n.title.trim() && !n.body.trim() && !n.items.some((i) => i.text.trim());
+    const empty = isNoteEmpty(n);
     setNotes((ns) => {
       const exists = ns.some((x) => x.id === n.id);
       if (empty) return ns.filter((x) => x.id !== n.id);
       return exists ? ns.map((x) => (x.id === n.id ? n : x)) : [n, ...ns];
     });
     setEditing(null);
+  };
+
+  const updateEditingNote = (n: Note) => {
+    const empty = isNoteEmpty(n);
+    setNotes((ns) => {
+      const exists = ns.some((x) => x.id === n.id);
+      if (exists) {
+        return empty ? ns.filter((x) => x.id !== n.id) : ns.map((x) => (x.id === n.id ? n : x));
+      }
+      return empty ? ns : [n, ...ns];
+    });
   };
 
   const reorder = (from: string, to: string, insertAfter?: boolean) => setNotes((ns) => moveNote(ns, from, to, insertAfter));
@@ -254,7 +334,7 @@ export function KeepApp() {
 
       {settings && <SettingsSheet theme={theme} themeColor={themeColor} font={font} onTheme={setTheme} onThemeColor={setThemeColor} onFont={setFont} onClose={() => setSettings(false)} />}
 
-      {editing && <Editor key={editing.id} initial={editing} labels={labels} onClose={(n) => { if (n.archived !== editing.archived) showToast(n.archived ? "Archived" : "Unarchived"); saveEditing(n); }}
+      {editing && <Editor key={editing.id} initial={editing} labels={labels} onChange={updateEditingNote} onClose={(n) => { if (n.archived !== editing.archived) showToast(n.archived ? "Archived" : "Unarchived"); saveEditing(n); }}
         onDelete={(n) => { setNotes((ns) => ns.filter((x) => x.id !== n.id)); setEditing(null); }}
         onTrash={(n) => saveEditing({ ...n, trashed: true, pinned: false })} onRestore={(n) => saveEditing({ ...n, trashed: false })} />}
 
@@ -385,13 +465,19 @@ function SettingsSheet({ theme, themeColor, font, onTheme, onThemeColor, onFont,
 function SettingGroup({ title, children }: { title: string; children: React.ReactNode }) { return <div className="mb-6"><h3 className="mb-2 text-xs font-bold tracking-wide text-muted-foreground">{title.toUpperCase()}</h3>{children}</div>; }
 function Choice({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) { return <button onClick={onClick} className={`relative flex min-h-20 flex-col items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-all duration-200 active:scale-95 ${active ? "border-primary bg-accent" : "bg-background hover:-translate-y-0.5 hover:border-foreground/30"}`}>{children}{active && <Check className="absolute right-2 top-2 size-3.5" />}</button>; }
 
-function Editor({ initial, labels, onClose, onDelete, onTrash, onRestore }: {
-  initial: Note; labels: string[]; onClose: (n: Note) => void; onDelete: (n: Note) => void; onTrash: (n: Note) => void; onRestore: (n: Note) => void;
+function Editor({ initial, labels, onClose, onDelete, onTrash, onRestore, onChange }: {
+  initial: Note; labels: string[]; onClose: (n: Note) => void; onDelete: (n: Note) => void; onTrash: (n: Note) => void; onRestore: (n: Note) => void; onChange?: (n: Note) => void;
 }) {
   const [preview, setPreview] = useState(false);
   const [n, setN] = useState<Note>(initial);
   const [panel, setPanel] = useState<"none" | "color" | "label" | "format">("none");
-  const set = (p: Partial<Note>) => setN((x) => ({ ...x, ...p, updated: Date.now() }));
+  const set = (p: Partial<Note>) => {
+    setN((prev) => {
+      const updated = { ...prev, ...p, updated: Date.now() };
+      onChange?.(updated);
+      return updated;
+    });
+  };
   const setItem = (id: string, p: Partial<Item>) => set({ items: n.items.map((i) => i.id === id ? { ...i, ...p } : i) });
   const handleEnter = (currentId: string) => {
     const idx = n.items.findIndex((x) => x.id === currentId);
