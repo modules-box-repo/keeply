@@ -1,6 +1,6 @@
 # Keeply
 
-![Keeply Logo](logo.jpg)
+![Keeply Logo](icon.jpg)
 
 A fast, lightweight, and modern local notes & checklists app. Capture ideas, organize tasks, and keep everything in one place with a smooth experience.
 
